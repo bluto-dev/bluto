@@ -1,0 +1,21 @@
+name: Test
+
+on: [workflow_call]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache-dependency-path: |
+            svcs/transcriber/pyproject.toml
+            svcs/transcriber/requirements/*.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
