@@ -12,7 +12,7 @@ representation of their entire soul!
 $ python -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
-$ FLASK_APP=markov_flask.py flask run
+$ flask run
 ```
 
 In your browser navigate to localhost:5000/[username] where [username] is the
