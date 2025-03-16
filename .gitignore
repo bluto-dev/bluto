@@ -6,4 +6,5 @@ flaskr.egg-info/
 .DS_Store
 .eggs
 .env
+venv
 *.swp

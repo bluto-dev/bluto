@@ -6,20 +6,13 @@
 An application that harvests a user's Twitter history and spits out a faithful
 representation of their entire soul!
 
-## How to run Twitkov
+## Getting started
 
 ```bash
-# Clone
-git clone https://github.com/brianshortnh/twitkov.git
-
-# Install requirements:
-pip3 install -r requirements.txt
-
-# To run the app, first set your FLASK_APP variable
-export FLASK_APP=markov_flask.py
-
-# Now run flask
-flask run
+$ python -m venv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+$ FLASK_APP=markov_flask.py flask run
 ```
 
 In your browser navigate to localhost:5000/[username] where [username] is the
