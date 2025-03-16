@@ -3,7 +3,7 @@
 
 ![Build Status](https://github.com/bluto-dev/bluto/actions/workflows/production.yml/badge.svg)
 
-An application that harvests a user's Twitter history and spits out a faithful
+An application that harvests a user's Bluesky history and spits out a faithful
 representation of their entire soul!
 
 ## Getting started
@@ -16,4 +16,4 @@ $ FLASK_APP=markov_flask.py flask run
 ```
 
 In your browser navigate to localhost:5000/[username] where [username] is the
-Twitter handle you want to generate tweets for.
+Bluesky handle you want to generate tweets for.
