@@ -1,4 +1,4 @@
-<h1 align="center"><a href="https://twitkov.club">Bluto</a></h1>
+<h1 align="center"><a href="https://bluto.dev">Bluto</a></h1>
 <p align="center"><img src="/static/markov-portrait-2.jpeg" /></p>
 
 [![Build Status](https://travis-ci.org/brianshortnh/twitkov.svg?branch=master)](https://travis-ci.org/brianshortnh/twitkov)
