@@ -1,5 +1,5 @@
 Feature: Markov app library
-    This library forms the basis of the Twitkov app,
+    This library forms the basis of the Bluto app,
     we want to make sure everything here works as it should
 
     Scenario Outline: Generating tweets

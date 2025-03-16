@@ -1,4 +1,4 @@
-"""Twitkov Flask App"""
+"""Bluto Flask App"""
 import json
 import os
 import markov_app as mkv
