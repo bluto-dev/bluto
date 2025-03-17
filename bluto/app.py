@@ -5,6 +5,7 @@ import sys
 
 from flask import Flask
 from flask import render_template
+from flask_talisman import Talisman
 
 from bluto import public
 from bluto.extensions import cache
@@ -23,6 +24,7 @@ def create_app(config_object="bluto.settings"):
     register_extensions(app)
     register_blueprints(app)
     register_errorhandlers(app)
+    register_security_headers(app)
     configure_logger(app)
     return app
 
@@ -32,6 +34,10 @@ def register_extensions(app):
     cache.init_app(app)
     debug_toolbar.init_app(app)
 
+def register_security_headers(app):
+    """Register a bunch of sec."""
+    if app.config["ENV"] == "production":
+        Talisman(app)
 
 def register_blueprints(app):
     """Register Flask blueprints."""
