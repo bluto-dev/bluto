@@ -1,0 +1,9 @@
+-r prod.txt
+
+# Testing
+pytest==8.3.5
+pytest-cov==6.0.0
+behave==1.2.6
+
+# Linting
+ruff==0.9.1  # https://github.com/astral-sh/ruff
