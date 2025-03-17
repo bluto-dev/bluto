@@ -32,3 +32,8 @@ def get_api_tweets(twitter_handle):
     """Makes tweets for requested user and return as json"""
     tweets = mkv.make_tweets(twitter_handle, 30)
     return json.dumps(tweets)
+
+@app.route('/api/ping', methods=['GET'])
+def ping():
+    """Simple health check"""
+    return 'pong', 200
