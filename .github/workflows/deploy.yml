@@ -107,5 +107,5 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: server_taskdef.json
-          container-name: server
+          container-name: bluto
           image: ${{ steps.login-ecr.outputs.registry }}/tmm-bluto:${{ github.sha }}
