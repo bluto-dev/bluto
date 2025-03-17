@@ -1,6 +1,6 @@
 ARG INSTALL_PYTHON_VERSION=3.11.6
 
-FROM python:${INSTALL_PYTHON_VERSION}-slim-bullseye as production
+FROM python:${INSTALL_PYTHON_VERSION}-slim-bullseye AS production
 
 WORKDIR /app
 
