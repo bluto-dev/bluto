@@ -21,10 +21,10 @@ def create_app(config_object="bluto.settings"):
     """
     app = Flask(__name__.split(".")[0], static_url_path=STATIC_URL_PATH)
     app.config.from_object(config_object)
+    register_security_headers(app)
     register_extensions(app)
     register_blueprints(app)
     register_errorhandlers(app)
-    register_security_headers(app)
     configure_logger(app)
     return app
 
