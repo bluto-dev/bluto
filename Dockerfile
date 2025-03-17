@@ -9,7 +9,7 @@ RUN chown -R sid:sid /app
 USER sid
 ENV PATH="/home/sid/.local/bin:${PATH}"
 
-COPY static /app/bluto/static
+COPY bluto/static /app/bluto/static
 COPY requirements requirements
 RUN pip install --no-cache --user -r requirements/prod.txt
 
