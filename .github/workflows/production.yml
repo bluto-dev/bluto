@@ -25,5 +25,5 @@ jobs:
       aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     with:
       aws_region: us-east-2
-      aws_role: arn:aws:iam::845666362991:user/us-east-2-tmm-bluto-github
+      aws_role: arn:aws:iam::845666362991:role/us-east-2-tmm-bluto-github
       environment: production
