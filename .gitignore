@@ -8,3 +8,4 @@ flaskr.egg-info/
 .env
 venv
 *.swp
+.ruff_cache

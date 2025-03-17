@@ -1,8 +1,10 @@
-<head>
+<!DOCTYPE html>
+<html>
+  <head>
     <meta charset="utf-8">
 
     <!-- General -->
-    <title>Bluto</title>
+    <title>{% block page_title %}Bluto{% endblock %}</title>
     <meta author="Brian Short & Matt Lewis" />
     <meta name="description" content="Markov Chain Generator for posts." />
     <meta name='url' content="https://bluto.dev" />
@@ -23,13 +25,28 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
     <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
     <link rel="bookmark" title="Bluto" href="https://bluto.dev" />
+  </head>
+  <body>
+    <header>
+      {% block header %}{% endblock %}
+    </header>
+    <h4 class="subhead">
+      Markov Chain Post Generator - <span id="date" />
+    </h4>
+    {% block content %}
 
-    <!-- GA Tag -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110856410-10" />
-    <script>
-     window.dataLayer = window.dataLayer || [];
-     function gtag(){dataLayer.push(arguments);}
-     gtag('js', new Date());
-     gtag('config', 'UA-110856410-10');
-    </script>
-</head>
+    <!-- Content gets served here -->
+
+    {% endblock %}
+
+    {% include 'loading.html' %}
+
+    <footer class="credits">
+      <p>Made by <a href="http://mattmatters.io">Matt Lewis</a> &amp; <a href="https://github.com/brianshortnh">Brian Short</a></p>
+      <div class="social">
+        <a href="https://github.com/bluto-dev/bluto"><i class="fa fa-github" aria-hidden="true" /></a>
+      </div>
+    </footer>
+  </body>
+  {% include 'scripts.html' %}
+</html>

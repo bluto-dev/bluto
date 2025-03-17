@@ -1,12 +1,17 @@
 {% extends "layout.html" %}
-{% block body %}
+
+{% block header %}
+<a href="{{ url_for('public.index')}}">BLUTO</a>
+{% endblock %}
+
+{% block content %}
 <div class="landing hide-on-load">
     <div class="column">
         <img class="media markov" src="{{ url_for('static', filename='markov-portrait-small.jpg') }}" />
         <p><i>Andrey Markov (14 June 1856 N.S. – 20 July 1922)</i></p>
     </div>
     <div class="column land-desc">
-        {% include 'search.html' %}
+        {% include 'public/search.html' %}
         <div class="description">
             <p>
                 A <b>Markov chain</b> is "a stochastic model describing a sequence of possible events in which the probability
