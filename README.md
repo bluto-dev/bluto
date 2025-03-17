@@ -1,5 +1,5 @@
 <h1 align="center"><a href="https://bluto.dev">Bluto</a></h1>
-<p align="center"><img src="/static/markov-portrait-2.jpeg" /></p>
+<p align="center"><img src="/bluto/static/markov-portrait-2.jpeg" /></p>
 
 ![Build Status](https://github.com/bluto-dev/bluto/actions/workflows/production.yml/badge.svg)
 
