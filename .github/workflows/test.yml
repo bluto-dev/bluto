@@ -20,5 +20,4 @@ jobs:
         run: pip install -r requirements/dev.txt
 
       - name: Check format/lint
-        working-directory: svcs/transcriber
         run: ruff check
