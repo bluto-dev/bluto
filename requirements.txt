@@ -1,5 +1,0 @@
-# Requirements for Twitkov Von Hammerschmidt
-Flask==3.1.0
-markovify==0.7.1
-python-twitter==3.4.1
-behave==1.2.6

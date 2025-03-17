@@ -12,10 +12,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
           cache-dependency-path: |
-            svcs/transcriber/pyproject.toml
-            svcs/transcriber/requirements/*.txt
+            requirements/*.txt
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements/dev.txt
+
+      - name: Check format/lint
+        working-directory: svcs/transcriber
+        run: ruff check
