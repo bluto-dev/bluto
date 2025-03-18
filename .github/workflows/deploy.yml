@@ -109,3 +109,12 @@ jobs:
           task-definition: server_taskdef.json
           container-name: bluto
           image: ${{ steps.login-ecr.outputs.registry }}/tmm-bluto:${{ github.sha }}
+
+      - name: Deploy Amazon ECS backend service with new server task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def-server.outputs.task-definition }}
+          service: tmm-bluto
+          cluster: tmm-cluster
+          wait-for-service-stability: true
+          force-new-deployment: true
