@@ -37,7 +37,7 @@ def register_extensions(app):
 def register_security_headers(app):
     """Register a bunch of sec."""
     if app.config["ENV"] == "production":
-        Talisman(app)
+        Talisman(app, force_https=False)
 
 def register_blueprints(app):
     """Register Flask blueprints."""
