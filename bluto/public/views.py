@@ -1,7 +1,6 @@
 """Public section, including homepage and signup."""
-import json
-
 from flask import Blueprint
+from flask import jsonify
 from flask import render_template
 from flask import request
 
@@ -31,7 +30,7 @@ def get_tweets():
 def get_api_tweets(twitter_handle):
     """Makes tweets for requested user and return as json"""
     tweets = mkv.make_tweets(twitter_handle, 30)
-    return json.dumps(tweets)
+    return jsonify(tweets)
 
 @blueprint.route("/api/ping", methods=["GET"])
 def ping():
