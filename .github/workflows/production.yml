@@ -16,13 +16,11 @@ jobs:
   deploy:
     uses: ./.github/workflows/deploy.yml
     permissions:
+      id-token: write
       contents: read
       packages: write
     needs:
       - test
-    secrets:
-      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     with:
       aws_region: us-east-2
       aws_role: arn:aws:iam::845666362991:role/us-east-2-tmm-bluto-github

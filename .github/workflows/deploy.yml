@@ -12,16 +12,12 @@ on:
       aws_role:
         required: true
         type: string
-    secrets:
-      aws_access_key_id:
-        required: true
-      aws_secret_access_key:
-        required: true
 
 jobs:
   build_server:
     name: Build Server
     permissions:
+      id-token: write
       contents: read
       packages: write
     environment: ${{ inputs.environment }}
@@ -39,8 +35,6 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ inputs.aws_region }}
           role-to-assume: ${{ inputs.aws_role }}
 
@@ -72,6 +66,7 @@ jobs:
       - build_server
     name: Deploy server
     permissions:
+      id-token: write
       contents: read
       packages: write
     environment: ${{ inputs.environment }}
@@ -80,8 +75,6 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ inputs.aws_region }}
           role-to-assume: ${{ inputs.aws_role }}
 
