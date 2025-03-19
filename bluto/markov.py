@@ -4,32 +4,34 @@ import os
 import re
 
 import markovify
-import twitter
-
-TWEET_LIMIT = 200
+from atproto import Client, IdResolver
 
 
-def generate(text_model, size, bound):
-    """Makes 140 character tweets"""
-    return [text_model.make_short_sentence(size) for i in range(bound)]
+def get_all_posts(username):
+    """Returns list of text entries for <username>'s last 100 posts'"""
+    client = Client()
+
+    user_identifier = IdResolver().handle.resolve(username)
+
+    posts = list(client.app.bsky.feed.post.list(user_identifier, limit=100).records.values())
+
+    return [post.text for post in posts]
 
 
-def get_all_tweets(username):
-    """Spawns api and gets last 2000 tweets"""
-    api = new_api()
-    tweets = get_tweets(api, username)
+def get_avatar_url(username):
+    """Get the URL of <username>'s avatar"""
+    client = Client()
 
-    for _ in range(20):
-        tweets += get_tweets(api, username, since=tweets[len(tweets) - 1].id)
+    # Technically the get_profile endpoint shouldn't require authentication
+    # but right now this works
+    # if we do end up needing to authenticate for this we should
+    # login using an exported session string instead of creating a new session every time
+    client.login(os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_PASSWORD"))
 
-    return tweets
+    user_identifier = IdResolver().handle.resolve(username)
+    profile = client.app.bsky.actor.get_profile({"actor": user_identifier})
 
-
-def get_profile_url(api, username):
-    """Get a big version of the profile image"""
-    user = (api.GetUser(screen_name=username),)
-
-    return user[0].profile_image_url.replace("normal", "400x400")
+    return profile.avatar
 
 
 def remove_twitlonger(tweet_list):
@@ -37,43 +39,13 @@ def remove_twitlonger(tweet_list):
     return [re.sub(r" \S*…[^']*", "", tweet) for tweet in tweet_list]
 
 
-def make_tweets(username, num_tweets):
-    """Produce an array of generated tweets"""
-    api = new_api()
-    data = remove_twitlonger([tweet.text for tweet in get_all_tweets(username)])
-    model = make_markov_model(data)
+def make_posts(username, num_posts):
+    """Produce an array of generated posts"""
+    data = remove_twitlonger(get_all_posts(username))
+    model = markovify.Text(" ".join(data))
 
     return {
         "username": username,
-        "profile_url": get_profile_url(api, username),
-        "tweets": generate(model, 140, num_tweets),
-        "long": generate(model, 240, 2),
-    }
-
-
-# Utility
-def new_api():
-    """Wrapper around spawning twitter api"""
-    return twitter.Api(
-        consumer_key=os.environ["TWITTER_API_KEY"],
-        consumer_secret=os.environ["TWITTER_API_SECRET"],
-        access_token_key=os.environ["TWITTER_ACCESS_TOKEN"],
-        access_token_secret=os.environ["TWITTER_ACCESS_SECRET"],
-    )
-
-
-def get_tweets(api, username, since=None):
-    """Wrapper around api request"""
-    return api.GetUserTimeline(
-        screen_name=username,
-        count=TWEET_LIMIT,
-        include_rts=False,
-        trim_user=False,
-        exclude_replies=True,
-        max_id=since,
-    )
-
-
-def make_markov_model(tweets):
-    """Wrapper around making Markov Chain"""
-    return markovify.Text(" ".join(tweets))
+        "profile_url": get_avatar_url(username),
+        "tweets": [model.make_short_sentence(140) for i in range(num_posts)],
+        "long": [model.make_short_sentence(240) for i in range(2)]}
