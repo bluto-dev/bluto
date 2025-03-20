@@ -4,7 +4,8 @@ import os
 import re
 
 import markovify
-from atproto import Client, IdResolver
+from atproto import Client
+from atproto import IdResolver
 
 
 def get_all_posts(username):
@@ -42,10 +43,15 @@ def remove_twitlonger(tweet_list):
 def make_posts(username, num_posts):
     """Produce an array of generated posts"""
     data = remove_twitlonger(get_all_posts(username))
-    model = markovify.Text(" ".join(data))
+    model = make_markov_model(data)
 
     return {
         "username": username,
         "profile_url": get_avatar_url(username),
         "tweets": [model.make_short_sentence(140) for i in range(num_posts)],
         "long": [model.make_short_sentence(240) for i in range(2)]}
+
+# Useful for Behave testing
+def make_markov_model(data):
+    """Wrapper around Markovify call"""
+    return markovify.Text(" ".join(data))

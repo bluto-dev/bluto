@@ -13,7 +13,7 @@ def step_impl(context):
 @when('we generate a {number:d} of new {length:d} character tweets')
 def step_impl(context, number, length):
     data = mk.make_markov_model(context.tweet_list)
-    context.new_tweet_list = mk.generate(data, length, number)
+    context.new_tweet_list = [data.make_short_sentence(length) for i in range(number)]
     assert (not(None in context.new_tweet_list))
 
 # Then
