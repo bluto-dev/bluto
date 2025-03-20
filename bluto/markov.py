@@ -12,9 +12,9 @@ def get_all_posts(username):
     """Returns list of text entries for <username>'s last 100 posts'"""
     client = Client()
 
-    user_identifier = IdResolver().handle.resolve(username)
+    user_id = IdResolver().handle.resolve(username)
 
-    posts = list(client.app.bsky.feed.post.list(user_identifier, limit=100).records.values())
+    posts = list(client.app.bsky.feed.post.list(user_id, limit=100).records.values())
 
     return [post.text for post in posts]
 
@@ -26,11 +26,11 @@ def get_avatar_url(username):
     # Technically the get_profile endpoint shouldn't require authentication
     # but right now this works
     # if we do end up needing to authenticate for this we should
-    # login using an exported session string instead of creating a new session every time
+    # login using an exported session string instead of creating a new session
     client.login(os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_PASSWORD"))
 
-    user_identifier = IdResolver().handle.resolve(username)
-    profile = client.app.bsky.actor.get_profile({"actor": user_identifier})
+    user_id = IdResolver().handle.resolve(username)
+    profile = client.app.bsky.actor.get_profile({"actor": user_id})
 
     return profile.avatar
 
@@ -49,7 +49,9 @@ def make_posts(username, num_posts):
         "username": username,
         "profile_url": get_avatar_url(username),
         "tweets": [model.make_short_sentence(140) for i in range(num_posts)],
-        "long": [model.make_short_sentence(240) for i in range(2)]}
+        "long": [model.make_short_sentence(240) for i in range(2)],
+    }
+
 
 # Useful for Behave testing
 def make_markov_model(data):

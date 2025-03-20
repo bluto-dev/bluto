@@ -10,7 +10,7 @@ python_files = [
 target-version = "py312"
 # Exclude a variety of commonly ignored directories.
 extend-exclude = [
-    "features/*"
+    "bluto/features/*"
 ]
 
 [tool.ruff.lint]
