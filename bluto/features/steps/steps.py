@@ -1,5 +1,5 @@
 import behave
-import markov_app as mk
+import markov as mk
 
 # Given
 @given('a list of tweets')
