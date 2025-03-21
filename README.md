@@ -16,4 +16,4 @@ $ flask run
 ```
 
 In your browser navigate to localhost:5000/[username] where [username] is the
-Bluesky handle you want to generate tweets for.
+Bluesky handle you want to generate posts for.

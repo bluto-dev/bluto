@@ -16,26 +16,26 @@ def index():
     return render_template("public/landing.html")
 
 
-@blueprint.route("/tweets", methods=["GET"])
-def get_tweets():
-    """Makes tweets for requested user and return rendered template"""
-    twitter_handle = request.args["twitter_handle"]
-    tweets = mkv.make_posts(twitter_handle, 30)
+@blueprint.route("/posts", methods=["GET"])
+def get_posts():
+    """Makes posts for requested user and return rendered template"""
+    bluesky_handle = request.args["bluesky_handle"]
+    posts = mkv.make_posts(bluesky_handle, 30)
 
     return render_template(
         "public/results.html",
-        username=twitter_handle,
-        tweets=tweets["tweets"],
-        long_tweets=tweets["long"],
-        profile_url=tweets["profile_url"],
+        username=bluesky_handle,
+        posts=posts["posts"],
+        long_posts=posts["long"],
+        profile_url=posts["profile_url"],
     )
 
 
-@blueprint.route("/api/<twitter_handle>", methods=["GET"])
-def get_api_tweets(twitter_handle):
-    """Makes tweets for requested user and return as json"""
-    tweets = mkv.make_posts(twitter_handle, 30)
-    return jsonify(tweets)
+@blueprint.route("/api/<bluesky_handle>", methods=["GET"])
+def get_api_posts(bluesky_handle):
+    """Makes posts for requested user and return as json"""
+    posts = mkv.make_posts(bluesky_handle, 30)
+    return jsonify(posts)
 
 
 @blueprint.route("/api/ping", methods=["GET"])

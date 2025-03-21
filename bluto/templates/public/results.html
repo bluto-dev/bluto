@@ -7,7 +7,7 @@
             <img class="media" src="{{ profile_url }}" />
         </div>
         <div class="long column">
-            {% for item in long_tweets -%}
+            {% for item in long_posts -%}
             <p>{{ item }}</p>
             {%- endfor %}
         </div>
@@ -16,7 +16,7 @@
         <h3>Letters to the editor</h3>
         <div class="additional__musings">
             <ul>
-                {% for item in tweets -%}
+                {% for item in posts -%}
                 <li>{{ item }}</li>
                 {%- endfor %}
             </ul>

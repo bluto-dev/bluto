@@ -1,4 +1,5 @@
 # Tests for markov_app.py
+# Currently deprecated
 import os
 
 import markov_app as mkv

@@ -6,7 +6,7 @@
     <!-- General -->
     <title>{% block page_title %}Bluto{% endblock %}</title>
     <meta author="Brian Short & Matt Lewis" />
-    <meta name="description" content="Markov Chain Generator for posts." />
+    <meta name="description" content="Markov Chain Generator for Bluesky posts." />
     <meta name='url' content="https://bluto.dev" />
     <meta name="robots" content="index, follow" />
 
@@ -16,7 +16,7 @@
 
     <!-- Open Graph -->
     <meta property="og:title" content="Bluto" />
-    <meta property="og:description" content="Markov Tweet Generator" />
+    <meta property="og:description" content="Markov Bluesky Post Generator" />
     <meta property="og:url" content="https://bluto.dev" />
     <meta property="og:image" content="{{ url_for('static', filename='markov-portrait-2.jpeg' )}}" />
 
@@ -31,7 +31,7 @@
       {% block header %}{% endblock %}
     </header>
     <h4 class="subhead">
-      Markov Chain Post Generator - <span id="date" />
+      Markov Chain Bluesky Post Generator - <span id="date" />
     </h4>
     {% block content %}
 

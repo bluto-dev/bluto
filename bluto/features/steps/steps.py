@@ -5,24 +5,24 @@ from pathlib import Path
 
 
 # Given
-@given("a list of tweets")
+@given("a list of posts")
 def step_impl(context):
-    with Path.open("features/test_tweets.txt") as f:
+    with Path.open("features/test_posts.txt") as f:
         content = f.readlines()
-        tweets = [x.strip() for x in content]
-    context.tweet_list = tweets
+        posts = [x.strip() for x in content]
+    context.post_list = posts
 
 
 # When
-@when("we generate a {number:d} of new {length:d} character tweets")
+@when("we generate a {number:d} of new {length:d} character posts")
 def step_impl(context, number, length):
-    data = mk.make_markov_model(context.tweet_list)
-    context.new_tweet_list = [data.make_short_sentence(length) for i in range(number)]
-    assert not (None in context.new_tweet_list)
+    data = mk.make_markov_model(context.post_list)
+    context.new_post_list = [data.make_short_sentence(length) for i in range(number)]
+    assert not (None in context.new_post_list)
 
 
 # Then
-@then("the {new_number:d} and {new_length:d} of tweets is correct")
+@then("the {new_number:d} and {new_length:d} of posts is correct")
 def step_impl(context, new_number, new_length):
-    assert len(context.new_tweet_list) == new_number
-    assert len(max(context.new_tweet_list, key=len)) <= new_length
+    assert len(context.new_post_list) == new_number
+    assert len(max(context.new_post_list, key=len)) <= new_length

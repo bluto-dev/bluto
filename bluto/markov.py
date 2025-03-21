@@ -33,9 +33,10 @@ def get_avatar_url(username):
     return profile.avatar
 
 
-def remove_twitlonger(tweet_list):
-    """Removes all tweets that have a twitlonger link in them"""
-    return [re.sub(r" \S*…[^']*", "", tweet) for tweet in tweet_list]
+# This should change probably
+def remove_twitlonger(post_list):
+    """Removes all posts that have a twitlonger link in them"""
+    return [re.sub(r" \S*…[^']*", "", post) for post in post_list]
 
 
 def make_posts(username, num_posts):
@@ -46,7 +47,7 @@ def make_posts(username, num_posts):
     return {
         "username": username,
         "profile_url": get_avatar_url(username),
-        "tweets": [model.make_short_sentence(140) for i in range(num_posts)],
+        "posts": [model.make_short_sentence(140) for i in range(num_posts)],
         "long": [model.make_short_sentence(240) for i in range(2)],
     }
 
