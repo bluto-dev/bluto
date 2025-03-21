@@ -2,34 +2,35 @@
 
 import os
 import re
+from pathlib import Path
 
 import markovify
-import twitter
-
-TWEET_LIMIT = 200
-
-
-def generate(text_model, size, bound):
-    """Makes 140 character tweets"""
-    return [text_model.make_short_sentence(size) for i in range(bound)]
+from atproto import Client
+from atproto import IdResolver
+from atproto import SessionEvent
 
 
-def get_all_tweets(username):
-    """Spawns api and gets last 2000 tweets"""
-    api = new_api()
-    tweets = get_tweets(api, username)
+def get_all_posts(username):
+    """Returns list of text entries for <username>'s last 100 posts'"""
+    # We don't need to authenticate this request
+    client = Client()
 
-    for _ in range(20):
-        tweets += get_tweets(api, username, since=tweets[len(tweets) - 1].id)
+    user_id = IdResolver().handle.resolve(username)
 
-    return tweets
+    posts = list(client.app.bsky.feed.post.list(user_id, limit=100).records.values())
+
+    return [post.text for post in posts]
 
 
-def get_profile_url(api, username):
-    """Get a big version of the profile image"""
-    user = (api.GetUser(screen_name=username),)
+def get_avatar_url(username):
+    """Get the URL of <username>'s avatar"""
+    client = get_client()
 
-    return user[0].profile_image_url.replace("normal", "400x400")
+    user_id = IdResolver().handle.resolve(username)
+
+    profile = client.app.bsky.actor.get_profile({"actor": user_id})
+
+    return profile.avatar
 
 
 def remove_twitlonger(tweet_list):
@@ -37,43 +38,52 @@ def remove_twitlonger(tweet_list):
     return [re.sub(r" \S*…[^']*", "", tweet) for tweet in tweet_list]
 
 
-def make_tweets(username, num_tweets):
-    """Produce an array of generated tweets"""
-    api = new_api()
-    data = remove_twitlonger([tweet.text for tweet in get_all_tweets(username)])
+def make_posts(username, num_posts):
+    """Produce an array of generated posts"""
+    data = remove_twitlonger(get_all_posts(username))
     model = make_markov_model(data)
 
     return {
         "username": username,
-        "profile_url": get_profile_url(api, username),
-        "tweets": generate(model, 140, num_tweets),
-        "long": generate(model, 240, 2),
+        "profile_url": get_avatar_url(username),
+        "tweets": [model.make_short_sentence(140) for i in range(num_posts)],
+        "long": [model.make_short_sentence(240) for i in range(2)],
     }
 
 
-# Utility
-def new_api():
-    """Wrapper around spawning twitter api"""
-    return twitter.Api(
-        consumer_key=os.environ["TWITTER_API_KEY"],
-        consumer_secret=os.environ["TWITTER_API_SECRET"],
-        access_token_key=os.environ["TWITTER_ACCESS_TOKEN"],
-        access_token_secret=os.environ["TWITTER_ACCESS_SECRET"],
-    )
+# Useful for Behave testing
+def make_markov_model(data):
+    """Wrapper around Markovify call"""
+    return markovify.Text(" ".join(data))
 
 
-def get_tweets(api, username, since=None):
-    """Wrapper around api request"""
-    return api.GetUserTimeline(
-        screen_name=username,
-        count=TWEET_LIMIT,
-        include_rts=False,
-        trim_user=False,
-        exclude_replies=True,
-        max_id=since,
-    )
+# Client handling
+def get_session():
+    try:
+        with Path.open("session.txt") as f:
+            return f.read()
+    except FileNotFoundError:
+        return None
 
 
-def make_markov_model(tweets):
-    """Wrapper around making Markov Chain"""
-    return markovify.Text(" ".join(tweets))
+def save_session(session_string):
+    with Path.open("session.txt", "w") as f:
+        f.write(session_string)
+
+
+def on_session_change(event, session):
+    if event in (SessionEvent.CREATE, SessionEvent.REFRESH):
+        save_session(session.export())
+
+
+def get_client():
+    client = Client()
+    client.on_session_change(on_session_change)
+
+    session_string = get_session()
+    if session_string:
+        client.login(session_string=session_string)
+    else:
+        client.login(os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_PASSWORD"))
+
+    return client

@@ -14,6 +14,7 @@ from bluto.extensions import debug_toolbar
 # Use cdn if in production
 STATIC_URL_PATH = "/static"
 
+
 def create_app(config_object="bluto.settings"):
     """Create application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
 
@@ -34,10 +35,12 @@ def register_extensions(app):
     cache.init_app(app)
     debug_toolbar.init_app(app)
 
+
 def register_security_headers(app):
     """Register a bunch of sec."""
     if app.config["ENV"] == "production":
         Talisman(app, force_https=False)
+
 
 def register_blueprints(app):
     """Register Flask blueprints."""
@@ -62,5 +65,6 @@ def configure_logger(app):
     handler = logging.StreamHandler(sys.stdout)
     if not app.logger.handlers:
         app.logger.addHandler(handler)
+
 
 app = Flask(__name__, static_url_path=STATIC_URL_PATH)
