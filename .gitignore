@@ -9,3 +9,4 @@ flaskr.egg-info/
 venv
 *.swp
 .ruff_cache
+session.txt

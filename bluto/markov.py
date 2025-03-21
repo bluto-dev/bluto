@@ -2,14 +2,17 @@
 
 import os
 import re
+from pathlib import Path
 
 import markovify
 from atproto import Client
 from atproto import IdResolver
+from atproto import SessionEvent
 
 
 def get_all_posts(username):
     """Returns list of text entries for <username>'s last 100 posts'"""
+    # We don't need to authenticate this request
     client = Client()
 
     user_id = IdResolver().handle.resolve(username)
@@ -21,15 +24,10 @@ def get_all_posts(username):
 
 def get_avatar_url(username):
     """Get the URL of <username>'s avatar"""
-    client = Client()
-
-    # Technically the get_profile endpoint shouldn't require authentication
-    # but right now this works
-    # if we do end up needing to authenticate for this we should
-    # login using an exported session string instead of creating a new session
-    client.login(os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_PASSWORD"))
+    client = get_client()
 
     user_id = IdResolver().handle.resolve(username)
+
     profile = client.app.bsky.actor.get_profile({"actor": user_id})
 
     return profile.avatar
@@ -57,3 +55,35 @@ def make_posts(username, num_posts):
 def make_markov_model(data):
     """Wrapper around Markovify call"""
     return markovify.Text(" ".join(data))
+
+
+# Client handling
+def get_session():
+    try:
+        with Path.open("session.txt") as f:
+            return f.read()
+    except FileNotFoundError:
+        return None
+
+
+def save_session(session_string):
+    with Path.open("session.txt", "w") as f:
+        f.write(session_string)
+
+
+def on_session_change(event, session):
+    if event in (SessionEvent.CREATE, SessionEvent.REFRESH):
+        save_session(session.export())
+
+
+def get_client():
+    client = Client()
+    client.on_session_change(on_session_change)
+
+    session_string = get_session()
+    if session_string:
+        client.login(session_string=session_string)
+    else:
+        client.login(os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_PASSWORD"))
+
+    return client
