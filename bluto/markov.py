@@ -8,27 +8,24 @@ import markovify
 from atproto import Client
 from atproto import IdResolver
 from atproto import SessionEvent
+from flask import abort
 
 
-def get_all_posts(username):
-    """Returns list of text entries for <username>'s last 100 posts'"""
+def get_all_posts(did):
+    """Returns list of text entries for last 100 posts for this DID"""
     # We don't need to authenticate this request
     client = Client()
 
-    user_id = IdResolver().handle.resolve(username)
-
-    posts = list(client.app.bsky.feed.post.list(user_id, limit=100).records.values())
+    posts = list(client.app.bsky.feed.post.list(did, limit=100).records.values())
 
     return [post.text for post in posts]
 
 
-def get_avatar_url(username):
-    """Get the URL of <username>'s avatar"""
+def get_avatar_url(did):
+    """Get the URL of avatar for this DID"""
     client = get_client()
 
-    user_id = IdResolver().handle.resolve(username)
-
-    profile = client.app.bsky.actor.get_profile({"actor": user_id})
+    profile = client.app.bsky.actor.get_profile({"actor": did})
 
     return profile.avatar
 
@@ -41,12 +38,14 @@ def remove_twitlonger(post_list):
 
 def make_posts(username, num_posts):
     """Produce an array of generated posts"""
-    data = remove_twitlonger(get_all_posts(username))
+    did = get_did_else_abort(username)
+
+    data = remove_twitlonger(get_all_posts(did))
     model = make_markov_model(data)
 
     return {
         "username": username,
-        "profile_url": get_avatar_url(username),
+        "profile_url": get_avatar_url(did),
         "posts": [model.make_short_sentence(140) for i in range(num_posts)],
         "long": [model.make_short_sentence(240) for i in range(2)],
     }
@@ -88,3 +87,10 @@ def get_client():
         client.login(os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_PASSWORD"))
 
     return client
+
+
+def get_did_else_abort(username):
+    did = IdResolver().handle.resolve(username)
+    if did is None:
+        abort(404)
+    return did
