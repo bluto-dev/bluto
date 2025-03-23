@@ -19,5 +19,5 @@ Flask-DebugToolbar==0.16.0
 environs==14.1.1
 
 # Markov
-markovify==0.7.1
+markovify==0.9.4
 atproto==0.0.59
