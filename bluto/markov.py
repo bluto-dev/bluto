@@ -30,31 +30,35 @@ def get_avatar_url(did):
     return profile.avatar
 
 
-# This should change probably
-def remove_twitlonger(post_list):
-    """Removes all posts that have a twitlonger link in them"""
-    return [re.sub(r" \S*…[^']*", "", post) for post in post_list]
-
-
 def make_posts(username, num_posts):
     """Produce an array of generated posts"""
     did = get_did_else_abort(username)
 
-    data = remove_twitlonger(get_all_posts(did))
-    model = make_markov_model(data)
+    user_posts = get_all_posts(did)
 
     return {
         "username": username,
         "profile_url": get_avatar_url(did),
-        "posts": [model.make_short_sentence(140) for i in range(num_posts)],
-        "long": [model.make_short_sentence(240) for i in range(2)],
+        "posts": make_markov_sentences(user_posts, 140, num_posts),
+        "long": make_markov_sentences(user_posts, 240, 2),
     }
 
 
-# Useful for Behave testing
-def make_markov_model(data):
-    """Wrapper around Markovify call"""
-    return markovify.Text(" ".join(data))
+def make_markov_sentences(user_posts, max_length, num_to_make):
+    """Clean up user post data, feed into Markov model, get a list of new posts"""
+
+    # Old twitlonger removal regex, update??
+    cleaned_posts = [re.sub(r" \S*…[^']*", "", post) for post in user_posts]
+
+    model = markovify.Text(" ".join(cleaned_posts))
+
+    return [
+        model.make_short_sentence(
+            max_chars=max_length,
+            test_output=False,
+        )
+        for i in range(num_to_make)
+    ]
 
 
 # Client handling
