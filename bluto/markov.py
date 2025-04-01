@@ -41,6 +41,7 @@ def make_posts(username, num_posts):
         "profile_url": get_avatar_url(did),
         "posts": make_markov_sentences(user_posts, 140, num_posts),
         "long": make_markov_sentences(user_posts, 240, 2),
+        "num_posts": len(user_posts),
     }
 
 

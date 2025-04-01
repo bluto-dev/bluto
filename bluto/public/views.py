@@ -28,6 +28,7 @@ def get_posts():
         posts=posts["posts"],
         long_posts=posts["long"],
         profile_url=posts["profile_url"],
+        num_posts=posts["num_posts"],
     )
 
 
