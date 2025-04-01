@@ -75,6 +75,7 @@ def make_markov_sentences(user_posts, max_length, num_to_make):
 
 # Client handling
 def get_session():
+    """Read previously exported session string, if it exists"""
     try:
         with Path.open("session.txt") as f:
             return f.read()
@@ -83,16 +84,19 @@ def get_session():
 
 
 def save_session(session_string):
+    """Export current session string to file"""
     with Path.open("session.txt", "w") as f:
         f.write(session_string)
 
 
 def on_session_change(event, session):
+    """Automatically write out session string when needed"""
     if event in (SessionEvent.CREATE, SessionEvent.REFRESH):
         save_session(session.export())
 
 
 def get_client():
+    """Return an authenticated Client instance using previous session if it exists"""
     client = Client()
     client.on_session_change(on_session_change)
 
@@ -106,6 +110,7 @@ def get_client():
 
 
 def get_did_else_abort(username):
+    """Return username if it exists, otherwise abort to 404 page"""
     did = IdResolver().handle.resolve(username)
     if did is None:
         abort(404)
