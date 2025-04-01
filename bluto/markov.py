@@ -12,13 +12,24 @@ from flask import abort
 
 
 def get_all_posts(did):
-    """Returns list of text entries for last 100 posts for this DID"""
+    """Returns list of text entries for last 2000 posts for this DID"""
     # We don't need to authenticate this request
     client = Client()
+    cursor = ""
+    post_texts = []
 
-    posts = list(client.app.bsky.feed.post.list(did, limit=100).records.values())
+    # Try to get 2000 posts
+    for _ in range(20):
+        response = client.app.bsky.feed.post.list(did, cursor=cursor, limit=100)
+        posts = list(response.records.values())
+        cursor = response.cursor
 
-    return [post.text for post in posts]
+        post_texts.extend([post.text for post in posts])
+
+        if not posts:
+            break
+
+    return post_texts
 
 
 def get_avatar_url(did):
