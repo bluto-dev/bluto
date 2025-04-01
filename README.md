@@ -12,8 +12,8 @@ representation of their entire soul!
 $ python -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements/dev.txt
-$ flask run
+$ flask --app autoapp.py run
 ```
 
-In your browser navigate to localhost:5000/[username] where [username] is the
+In your browser navigate to localhost:5000 or localhost:5000/posts?bluesky_handle=[username] where [username] is the
 Bluesky handle you want to generate posts for.
