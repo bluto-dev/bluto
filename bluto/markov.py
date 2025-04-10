@@ -8,54 +8,57 @@ import markovify
 from atproto import Client
 from atproto import IdResolver
 from atproto import SessionEvent
+from flask import abort
 
 
-def get_all_posts(username):
-    """Returns list of text entries for <username>'s last 100 posts'"""
+def get_all_posts(did):
+    """Returns list of text entries for last 100 posts for this DID"""
     # We don't need to authenticate this request
     client = Client()
 
-    user_id = IdResolver().handle.resolve(username)
-
-    posts = list(client.app.bsky.feed.post.list(user_id, limit=100).records.values())
+    posts = list(client.app.bsky.feed.post.list(did, limit=100).records.values())
 
     return [post.text for post in posts]
 
 
-def get_avatar_url(username):
-    """Get the URL of <username>'s avatar"""
+def get_avatar_url(did):
+    """Get the URL of avatar for this DID"""
     client = get_client()
 
-    user_id = IdResolver().handle.resolve(username)
-
-    profile = client.app.bsky.actor.get_profile({"actor": user_id})
+    profile = client.app.bsky.actor.get_profile({"actor": did})
 
     return profile.avatar
 
 
-# This should change probably
-def remove_twitlonger(post_list):
-    """Removes all posts that have a twitlonger link in them"""
-    return [re.sub(r" \S*…[^']*", "", post) for post in post_list]
-
-
 def make_posts(username, num_posts):
     """Produce an array of generated posts"""
-    data = remove_twitlonger(get_all_posts(username))
-    model = make_markov_model(data)
+    did = get_did_else_abort(username)
+
+    user_posts = get_all_posts(did)
 
     return {
         "username": username,
-        "profile_url": get_avatar_url(username),
-        "posts": [model.make_short_sentence(140) for i in range(num_posts)],
-        "long": [model.make_short_sentence(240) for i in range(2)],
+        "profile_url": get_avatar_url(did),
+        "posts": make_markov_sentences(user_posts, 140, num_posts),
+        "long": make_markov_sentences(user_posts, 240, 2),
     }
 
 
-# Useful for Behave testing
-def make_markov_model(data):
-    """Wrapper around Markovify call"""
-    return markovify.Text(" ".join(data))
+def make_markov_sentences(user_posts, max_length, num_to_make):
+    """Clean up user post data, feed into Markov model, get a list of new posts"""
+
+    # Old twitlonger removal regex, update??
+    cleaned_posts = [re.sub(r" \S*…[^']*", "", post) for post in user_posts]
+
+    model = markovify.Text(" ".join(cleaned_posts))
+
+    return [
+        model.make_short_sentence(
+            max_chars=max_length,
+            test_output=False,
+        )
+        for i in range(num_to_make)
+    ]
 
 
 # Client handling
@@ -88,3 +91,10 @@ def get_client():
         client.login(os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_PASSWORD"))
 
     return client
+
+
+def get_did_else_abort(username):
+    did = IdResolver().handle.resolve(username)
+    if did is None:
+        abort(404)
+    return did
