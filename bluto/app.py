@@ -39,7 +39,8 @@ def register_extensions(app):
 def register_security_headers(app):
     """Register a bunch of sec."""
     if app.config["ENV"] == "production":
-        Talisman(app, force_https=False)
+        csp = {"default-src": ["'self'", "*.bsky.app"]}
+        Talisman(app, force_https=False, content_security_policy=csp)
 
 
 def register_blueprints(app):
